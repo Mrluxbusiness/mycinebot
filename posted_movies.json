@@ -1,0 +1,9 @@
+{
+  "hollywood": {"posted_ids": [], "last_year": 2026, "last_page": 1},
+  "bollywood": {"posted_ids": [], "last_year": 2026, "last_page": 1},
+  "south_indian": {"posted_ids": [], "last_year": 2026, "last_page": 1},
+  "korean": {"posted_ids": [], "last_year": 2026, "last_page": 1},
+  "japanese": {"posted_ids": [], "last_year": 2026, "last_page": 1},
+  "tv_series": {"posted_ids": [], "last_year": 2026, "last_page": 1},
+  "trending": {"posted_ids": [], "last_year": 2026, "last_page": 1}
+}
