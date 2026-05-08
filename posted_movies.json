@@ -23,8 +23,11 @@
     "last_page": 1
   },
   "japanese": {
-    "posted_ids": [],
-    "last_year": 2026,
+    "posted_ids": [
+      "1575337",
+      "1600672"
+    ],
+    "last_year": 2025,
     "last_page": 1
   },
   "tv_series": {
