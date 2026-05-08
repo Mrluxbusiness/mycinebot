@@ -1,0 +1,122 @@
+name: MyCineBD Daily Movie Post
+
+on:
+  # ─── BD Time → UTC (BD = UTC + 6) ──────────────────────
+  # Morning   → BD 10:00 AM = UTC 04:00  → '0 4 * * *'
+  # Afternoon → BD  3:00 PM = UTC 09:00  → '0 9 * * *'
+  # Evening   → BD  8:30 PM = UTC 14:30  → '30 14 * * *'
+  # ────────────────────────────────────────────────────────
+  schedule:
+    - cron: '0 4 * * *'       # Morning  (BD 10:00 AM)
+    - cron: '0 9 * * *'       # Afternoon (BD 3:00 PM)
+    - cron: '30 14 * * *'     # Evening  (BD 8:30 PM)
+
+  workflow_dispatch:
+    inputs:
+      slot:
+        description: 'Which time slot to run?'
+        required: true
+        default: 'evening'
+        type: choice
+        options:
+          - morning
+          - afternoon
+          - evening
+          - all
+
+jobs:
+  post-movies:
+    runs-on: ubuntu-latest
+
+    permissions:
+      contents: write
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Setup Python 3.11
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      # ─── MORNING SESSION (BD 10:00 AM) ─────────────────
+      - name: "🌅 Morning Session — Bollywood / South Indian"
+        if: >
+          github.event.schedule == '0 4 * * *' ||
+          (github.event_name == 'workflow_dispatch' &&
+           (github.event.inputs.slot == 'morning' ||
+            github.event.inputs.slot == 'all'))
+        env:
+          BOT_TOKEN: ${{ secrets.BOT_TOKEN }}
+          TMDB_API_KEY: ${{ secrets.TMDB_API_KEY }}
+          CHANNEL_ID: ${{ secrets.CHANNEL_ID }}
+        run: |
+          python - << 'PYEOF'
+          import asyncio, sys
+          sys.path.insert(0, '.')
+          from mycinebd_bot import run_slot
+          asyncio.run(run_slot("morning"))
+          PYEOF
+        timeout-minutes: 30
+
+      # ─── AFTERNOON SESSION (BD 3:00 PM) ────────────────
+      - name: "🌆 Afternoon Session — Trending / Korean / Series"
+        if: >
+          github.event.schedule == '0 9 * * *' ||
+          (github.event_name == 'workflow_dispatch' &&
+           (github.event.inputs.slot == 'afternoon' ||
+            github.event.inputs.slot == 'all'))
+        env:
+          BOT_TOKEN: ${{ secrets.BOT_TOKEN }}
+          TMDB_API_KEY: ${{ secrets.TMDB_API_KEY }}
+          CHANNEL_ID: ${{ secrets.CHANNEL_ID }}
+        run: |
+          python - << 'PYEOF'
+          import asyncio, sys
+          sys.path.insert(0, '.')
+          from mycinebd_bot import run_slot
+          asyncio.run(run_slot("afternoon"))
+          PYEOF
+        timeout-minutes: 30
+
+      # ─── EVENING SESSION (BD 8:30 PM) ──────────────────
+      - name: "🌙 Evening Session — Hollywood Prime Time"
+        if: >
+          github.event.schedule == '30 14 * * *' ||
+          (github.event_name == 'workflow_dispatch' &&
+           (github.event.inputs.slot == 'evening' ||
+            github.event.inputs.slot == 'all'))
+        env:
+          BOT_TOKEN: ${{ secrets.BOT_TOKEN }}
+          TMDB_API_KEY: ${{ secrets.TMDB_API_KEY }}
+          CHANNEL_ID: ${{ secrets.CHANNEL_ID }}
+        run: |
+          python - << 'PYEOF'
+          import asyncio, sys
+          sys.path.insert(0, '.')
+          from mycinebd_bot import run_slot
+          asyncio.run(run_slot("evening"))
+          PYEOF
+        timeout-minutes: 30
+
+      # ─── SAVE STATE ────────────────────────────────────
+      - name: Commit posted_movies.json
+        if: always()
+        run: |
+          git config user.name  "MyCineBD Bot"
+          git config user.email "bot@mycinebd.cloud"
+          git add posted_movies.json
+          if git diff --staged --quiet; then
+            echo "No changes to commit."
+          else
+            git commit -m "bot: Update posted history [skip ci]"
+            git push
+            echo "posted_movies.json saved."
+          fi
