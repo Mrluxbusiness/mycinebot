@@ -40,7 +40,10 @@
     "last_page": 1
   },
   "tv_series": {
-    "posted_ids": [],
+    "posted_ids": [
+      "124364",
+      "76479"
+    ],
     "last_year": 2026,
     "last_page": 1
   },
