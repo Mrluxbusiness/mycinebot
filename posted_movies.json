@@ -36,8 +36,11 @@
     "last_page": 1
   },
   "korean": {
-    "posted_ids": [],
-    "last_year": 2026,
+    "posted_ids": [
+      "1321179",
+      "1268127"
+    ],
+    "last_year": 2025,
     "last_page": 1
   },
   "japanese": {
