@@ -28,8 +28,11 @@
     "last_page": 1
   },
   "south_indian": {
-    "posted_ids": [],
-    "last_year": 2026,
+    "posted_ids": [
+      "1542352",
+      "1561687"
+    ],
+    "last_year": 2025,
     "last_page": 1
   },
   "korean": {
